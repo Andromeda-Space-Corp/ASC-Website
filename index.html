@@ -17,6 +17,7 @@
 <link rel="preload" href="assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
 <style>
 @font-face{ font-family:'Archivo'; src:url(assets/fonts/archivo.woff2) format('woff2'); font-weight:100 900; font-display:swap; }
+@font-face{ font-family:'JetBrains Mono'; src:url(assets/fonts/jbmono.woff2) format('woff2'); font-weight:100 800; font-display:swap; }
 
 :root{
   --bg:#05070c;
@@ -30,6 +31,8 @@
   --on-accent:#04070d;
   --danger:#ff6b6b;
   --sans:'Archivo',system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --line:rgba(140,175,220,.20);
 
   --s-display:clamp(3.2rem,7.2vw,6.8rem);
   --s-h2:clamp(2.2rem,4.2vw,3.8rem);
@@ -53,6 +56,8 @@ button{ font:inherit; color:inherit; background:none; border:0; cursor:pointer; 
 ::selection{ background:var(--accent); color:var(--on-accent); }
 .wrap{ max-width:var(--max); margin:0 auto; padding:0 var(--m); }
 .sr{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+/* a table ignores width:1px, so the hidden chart table is taken out of layout as a block */
+table.sr{ display:block; clip-path:inset(50%); }
 
 h1,h2,h3{ font-weight:800; text-wrap:balance; }
 h2{ font-size:var(--s-h2); letter-spacing:-0.035em; line-height:1.02; }
@@ -71,6 +76,16 @@ p{ max-width:62ch; }
 .btn:active{ transform:translateY(1px); }
 .btn.ghost{ background:var(--surface-2); color:var(--ink); }
 .btn.ghost:hover{ background:var(--surface-3); }
+
+/* ---------- shared: technical labels and the framed panel ---------- */
+.mono{ font-family:var(--mono); font-size:.75rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:500; }
+.mono b{ color:var(--ink); font-weight:600; }
+.mono .a{ color:var(--accent); }
+.frame{ position:relative; border:1px solid var(--line); }
+.frame::before,.frame::after{ content:''; position:absolute; width:14px; height:14px; border-color:var(--accent); border-style:solid; pointer-events:none; }
+.frame::before{ top:-1px; left:-1px; border-width:2px 0 0 2px; }
+.frame::after{ bottom:-1px; right:-1px; border-width:0 2px 2px 0; }
+.strip{ display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; padding:14px 22px; border-bottom:1px solid var(--line); }
 
 /* ---------- scene ---------- */
 #scene{ position:fixed; inset:0; width:100%; height:100%; z-index:0; display:block; opacity:0; transition:opacity 1.4s ease; }
@@ -127,46 +142,75 @@ main, footer{ position:relative; z-index:1; }
 .vision{ padding:var(--gap) 0; }
 .vision .top{ display:grid; grid-template-columns:1fr 1fr; gap:40px clamp(32px,6vw,96px); }
 .vision .top h2{ grid-column:1/-1; max-width:24ch; }
-.vision .top p{ grid-column:2; }
+.vision .top p{ grid-column:1/-1; max-width:64ch; }
 .vision .top p{ color:var(--muted); }
 .vision .top p strong{ color:var(--ink); font-weight:600; }
-.unlocks{ margin-top:clamp(64px,7vw,104px); display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; list-style:none; }
-.unlocks li{ background:var(--surface); padding:32px 28px 36px; min-height:200px; display:flex; flex-direction:column; justify-content:space-between; gap:32px; transition:background .25s; }
-.unlocks li:hover{ background:var(--surface-2); }
-.unlocks li::before{ content:''; display:block; width:28px; height:4px; background:var(--accent); }
-.unlocks span{ font-size:clamp(1.35rem,1.9vw,1.75rem); font-weight:750; letter-spacing:-0.025em; line-height:1.12; }
-.vision .close{ margin-top:28px; font-size:var(--s-lead); font-weight:600; }
-@media(max-width:1000px){ .unlocks{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
-@media(max-width:760px){ .vision .top{ grid-template-columns:1fr; } .vision .top p{ grid-column:1; } .fleet .head h2{ font-size:1.8rem; } .unlocks li{ min-height:150px; } .vision h2{ font-size:1.9rem; } }
+/* the four industries stand on the infrastructure slab; take the slab away and they fall */
+@media(max-width:760px){ .vision .top{ grid-template-columns:1fr; } .vision .top p{ grid-column:1; } .fleet .head h2{ font-size:1.8rem; } .vision h2{ font-size:1.9rem; } }
+
+/* ---------- points: short statements in a row, each under a blue rule ---------- */
+.points-wrap{ margin-top:clamp(56px,6vw,88px); }
+.points-label{ font-family:var(--mono); font-size:.75rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:20px; }
+.points{ list-style:none; display:grid; gap:clamp(24px,3vw,40px); }
+.points.four{ grid-template-columns:repeat(4,minmax(0,1fr)); }
+.points.three{ grid-template-columns:repeat(3,minmax(0,1fr)); }
+.points li{ border-top:3px solid var(--accent); padding-top:18px; }
+.points h3{ font-size:clamp(1.25rem,1.7vw,1.5rem); }
+.points p{ margin-top:8px; color:var(--muted); }
+.points-close{ margin-top:clamp(32px,4vw,48px); font-size:var(--s-lead); font-weight:600; }
+.points-close.fix{ font-size:clamp(1.5rem,2.2vw,2rem); font-weight:800; letter-spacing:-0.025em; }
+.points-close a{ margin-left:.6rem; font-size:1rem; font-weight:650; letter-spacing:0; color:var(--accent); text-decoration:none; display:inline-flex; align-items:center; gap:.5rem; vertical-align:middle; }
+.points-close a svg{ width:16px; height:16px; transition:transform .25s var(--ease); }
+.points-close a:hover svg{ transform:translateX(4px); }
+@media(max-width:900px){ .points.four{ grid-template-columns:repeat(2,minmax(0,1fr)); } .points.three{ grid-template-columns:1fr; } }
+@media(max-width:520px){ .points.four{ grid-template-columns:1fr; } }
 
 /* ---------- problem ---------- */
 .problem{ background:var(--surface); padding:var(--gap) 0; }
-.problem .intro{ display:grid; grid-template-columns:1fr 1fr; gap:24px clamp(32px,6vw,96px); align-items:end; margin-bottom:56px; }
+.problem .intro{ display:grid; grid-template-columns:1fr 1fr; gap:24px clamp(32px,6vw,96px); align-items:end; margin-bottom:48px; }
 .problem .intro p{ color:var(--muted); }
-.issues{ list-style:none; display:grid; gap:6px; }
-.issues li{ background:var(--bg); padding:clamp(28px,3vw,40px); display:grid; grid-template-columns:minmax(0,5fr) 7fr; gap:24px clamp(32px,6vw,96px); align-items:baseline; }
-.issues h3{ font-size:clamp(1.6rem,2.4vw,2.2rem); }
-.issues p{ color:var(--muted); font-size:1.15rem; }
-.answer{ margin-top:6px; background:var(--accent); color:var(--on-accent); padding:clamp(28px,3vw,40px); display:flex; justify-content:space-between; align-items:center; gap:24px; flex-wrap:wrap; }
-.answer p{ font-size:clamp(1.6rem,2.4vw,2.2rem); font-weight:800; letter-spacing:-0.03em; }
-.answer a{ font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:.6rem; }
-.answer a svg{ width:16px; height:16px; transition:transform .25s var(--ease); }
-.answer a:hover svg{ transform:translateX(4px); }
-@media(max-width:860px){ .problem .intro{ grid-template-columns:1fr; } .issues li{ grid-template-columns:1fr; gap:10px; } }
+@media(max-width:860px){ .problem .intro{ grid-template-columns:1fr; } }
 
-/* ---------- demand ---------- */
+/* ---------- demand: a framed plot with the two money figures beside it ---------- */
 .demand{ padding:var(--gap) 0; }
 .demand .head{ display:flex; justify-content:space-between; align-items:end; gap:2rem; flex-wrap:wrap; }
 .demand .head p{ color:var(--muted); max-width:38ch; }
-.figures{ margin-top:56px; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; }
-.figures .fig p{ padding-bottom:4px; }
-.fig{ background:var(--surface); padding:clamp(28px,3vw,40px); display:flex; flex-direction:column; justify-content:space-between; gap:48px; min-height:300px; }
-.fig .n{ display:block; font-size:clamp(2.4rem,3.7vw,3.9rem); font-weight:850; letter-spacing:-0.05em; line-height:.9; font-variant-numeric:tabular-nums; color:var(--ink); white-space:nowrap; }
-.fig p{ color:var(--muted); }
-.fig p strong{ color:var(--ink); font-weight:600; }
-.figures + .src{ margin-top:16px; font-size:var(--s-small); color:var(--muted); }
-@media(max-width:1100px){ .figures{ grid-template-columns:repeat(2,minmax(0,1fr)); } .fig .n{ font-size:clamp(2.4rem,7vw,4.4rem); } }
-@media(max-width:560px){ .figures{ grid-template-columns:1fr; } .fig{ min-height:0; } }
+.dgrid{ margin-top:56px; display:grid; grid-template-columns:8fr 4fr; }
+.plot{ padding:28px 28px 20px; border-right:1px solid var(--line); }
+.plot .cap{ margin-top:14px; }
+.plot .ax{ stroke:var(--line); }
+.plot .gl{ stroke:rgba(90,169,255,.07); }
+.plot .proj{ fill:none; stroke:var(--accent); stroke-width:2.5; }
+.plot .area{ fill:rgba(90,169,255,.10); }
+.plot .pt{ fill:var(--bg); stroke:var(--accent); stroke-width:2; }
+.plot .pt.now{ fill:var(--accent); }
+.plot svg{ width:100%; height:auto; overflow:visible; }
+.plot text{ font-family:var(--mono); letter-spacing:.06em; fill:var(--muted); text-transform:uppercase; }
+.plot .tk{ font-size:13px; }
+.plot .lb{ font-size:14px; }
+.plot text.val{ font-family:var(--sans); font-size:38px; font-weight:850; letter-spacing:-0.04em; fill:var(--ink); text-transform:none; }
+.plot .draw{ stroke-dasharray:1100; stroke-dashoffset:1100; }
+.in .plot .draw{ animation:draw 2.2s var(--ease) .3s forwards; }
+@keyframes draw{ to{ stroke-dashoffset:0; } }
+.units-note{ margin-top:16px; color:var(--muted); max-width:52ch; }
+.side{ display:grid; grid-template-rows:1fr 1fr; }
+.side > div{ padding:28px; display:flex; flex-direction:column; justify-content:space-between; gap:24px; }
+.side > div + div{ border-top:1px solid var(--line); }
+.side .n{ font-size:clamp(2.6rem,4.2vw,4rem); font-weight:850; letter-spacing:-0.05em; line-height:.9; font-variant-numeric:tabular-nums; }
+.side p{ color:var(--muted); }
+.src{ margin-top:14px; }
+@media(max-width:900px){ .dgrid{ grid-template-columns:1fr; } .plot{ border-right:0; border-bottom:1px solid var(--line); } }
+/* on a phone the chart shrinks to about half size, so its labels grow to stay readable */
+@media(max-width:600px){ .plot{ padding:20px 16px 12px; } .plot .tk,.plot .lb{ font-size:22px; } .plot text.val{ font-size:46px; } }
+@media(prefers-reduced-motion:reduce){ .plot .draw{ stroke-dashoffset:0; animation:none; } }
+/* ---------- missions: defense and commercial, side by side ---------- */
+.missions{ padding:var(--gap) 0; border-top:1px solid var(--line); }
+.missions .head h2{ max-width:28ch; }
+.mgrid{ margin-top:56px; display:grid; grid-template-columns:1fr 1fr; gap:clamp(32px,5vw,80px); }
+.mtag{ max-width:none; padding-bottom:16px; border-bottom:2px solid var(--accent); }
+.mcol ul{ list-style:none; }
+.mcol li{ padding:22px 0; border-bottom:1px solid var(--line); font-size:clamp(1.25rem,1.8vw,1.6rem); font-weight:750; letter-spacing:-0.02em; line-height:1.2; }
+@media(max-width:860px){ .mgrid{ grid-template-columns:1fr; } }
 
 /* ---------- vehicles ---------- */
 .fleet{ padding:0 0 var(--gap); }
@@ -176,57 +220,51 @@ main, footer{ position:relative; z-index:1; }
 .vehicle + .vehicle{ margin-top:6px; }
 .vehicle .plate{ background:var(--surface-2); aspect-ratio:16/10; display:flex; align-items:center; justify-content:center; overflow:hidden; }
 .vehicle .plate img{ width:78%; height:auto; transition:transform 1.2s var(--ease); }
-.vehicle:hover .plate img{ transform:scale(1.03); }
 .vtext{ padding:clamp(32px,4vw,64px); display:flex; flex-direction:column; justify-content:flex-end; gap:20px; }
 .vtext h3{ font-size:clamp(2.2rem,3.8vw,3.4rem); letter-spacing:-0.04em; line-height:1; }
 .vtext p{ font-size:1.15rem; color:var(--muted); max-width:34ch; }
 @media(max-width:860px){ .vehicle{ grid-template-columns:1fr; } }
 
-/* ---------- team ---------- */
+/* ---------- team: founders and advisors on one roster ---------- */
 .team{ padding:var(--gap) 0; background:var(--surface); }
-.team .head{ display:flex; justify-content:space-between; align-items:end; gap:2rem; flex-wrap:wrap; }
-.people{ margin-top:56px; display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
-.person{ background:var(--bg); }
+.people{ margin-top:56px; display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:6px; }
+.people .person{ grid-column:span 3; }
+.people .person.adv{ grid-column:span 4; }
+.person{ background:var(--bg); display:flex; flex-direction:column; text-decoration:none; }
 .person .ph{ aspect-ratio:4/5; overflow:hidden; background:var(--surface-2); }
 .person .ph img{ width:100%; height:100%; object-fit:cover; filter:grayscale(1) contrast(1.05); transition:filter .5s ease, transform .8s var(--ease); }
-.person:hover .ph img{ filter:none; transform:scale(1.03); }
-.person .info{ padding:24px 24px 30px; }
+.person.adv .ph{ aspect-ratio:16/9; }
+.mono-ph{ display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:1.6rem; letter-spacing:.12em; color:var(--accent); }
+.person .info{ padding:22px 24px 28px; flex:1; display:flex; flex-direction:column; }
 .person h3{ font-size:1.3rem; letter-spacing:-0.02em; }
-.person .role{ margin-top:.25rem; color:var(--accent); font-weight:600; font-size:.95rem; }
+.person .role{ margin-top:.3rem; font-family:var(--mono); font-size:.75rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); }
 .person .bio{ margin-top:.9rem; color:var(--muted); font-size:.98rem; }
-.advisors{ margin-top:clamp(80px,9vw,120px); display:grid; gap:40px; }
-.advisors h2{ font-size:clamp(1.9rem,3vw,2.7rem); }
-.adv{ list-style:none; display:grid; gap:6px; }
-.adv li{ background:var(--bg); padding:28px 32px; display:grid; grid-template-columns:minmax(0,4fr) 8fr; gap:24px; align-items:baseline; }
-.adv h3{ font-size:1.2rem; letter-spacing:-0.015em; }
-.adv p{ color:var(--muted); }
-@media(max-width:1000px){ .people{ grid-template-columns:1fr 1fr; }  }
-@media(max-width:560px){ .adv li{ grid-template-columns:1fr; gap:8px; } .people{ grid-template-columns:1fr; } .person .ph{ aspect-ratio:4/3; } .person .ph img{ object-position:50% 25%; } }
+@media(max-width:1000px){ .people .person, .people .person.adv{ grid-column:span 6; } }
+@media(max-width:560px){ .people .person, .people .person.adv{ grid-column:1/-1; } .person .ph{ aspect-ratio:4/3; } .person .ph img{ object-position:50% 25%; } }
 
-/* ---------- contact ---------- */
+/* ---------- contact: an inquiry form in a framed panel ---------- */
 .contact{ padding:var(--gap) 0; }
-.contact .panel{ display:grid; grid-template-columns:5fr 7fr; background:var(--surface); }
-.contact .left{ padding:clamp(32px,4vw,64px); display:flex; flex-direction:column; justify-content:space-between; gap:48px; background:var(--surface-2); }
-.contact .left p{ color:var(--muted); margin-top:20px; }
-.contact dl{ display:grid; gap:20px; }
-.contact dt{ font-size:var(--s-small); color:var(--muted); }
-.contact dd a{ font-size:1.15rem; font-weight:600; text-decoration:none; }
-.contact dd a:hover{ color:var(--accent); }
-form.cf{ padding:clamp(32px,4vw,64px); display:grid; grid-template-columns:1fr 1fr; gap:20px; }
-.field{ display:grid; gap:8px; }
+.req{ background:var(--bg); }
+.req-in{ display:grid; grid-template-columns:5fr 7fr; }
+.req .left{ padding:clamp(28px,4vw,56px); border-right:1px solid var(--line); display:flex; flex-direction:column; justify-content:space-between; gap:40px; }
+.req .left p{ margin-top:18px; color:var(--muted); }
+.req .left p.mono{ margin:0 0 6px; }
+.req .left a.mail{ font-size:1.15rem; font-weight:600; text-decoration:none; }
+.req .left a.mail:hover{ color:var(--accent); }
+form.cf{ padding:clamp(28px,4vw,56px); display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+.field{ display:grid; gap:8px; align-content:start; }
 .field.wide{ grid-column:1/-1; }
-.field label{ font-size:var(--s-small); font-weight:600; color:var(--ink); }
-.field input,.field select,.field textarea{ width:100%; font:inherit; font-size:1rem; color:var(--ink); background:var(--bg); border:0; border-radius:0; padding:0 16px; height:52px;
-  box-shadow:inset 0 -2px 0 var(--surface-3); transition:box-shadow .2s; } /* taste-skill-ignore: input underline, form field */
-.field textarea{ height:132px; padding:14px 16px; resize:vertical; }
-.field select{ appearance:none; background:var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%239aa8bc' stroke-width='1.8'/%3E%3C/svg%3E") no-repeat right 18px center; padding-right:44px; }
-.field input:focus,.field select:focus,.field textarea:focus{ outline:none; box-shadow:inset 0 -2px 0 var(--accent); } /* taste-skill-ignore */
-.field.invalid input{ box-shadow:inset 0 -2px 0 var(--danger); } /* taste-skill-ignore */
-.field .err{ font-size:var(--s-small); color:var(--danger); min-height:0; }
-.cf .send{ grid-column:1/-1; display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
-.cf-status{ font-size:var(--s-small); color:var(--muted); }
-@media(max-width:860px){ .contact .panel{ grid-template-columns:1fr; } form.cf{ grid-template-columns:1fr; } }
-
+.field input,.field select,.field textarea{ width:100%; font:inherit; font-size:1rem; color:var(--ink); background:transparent; border:1px solid var(--line); border-radius:0; padding:0 14px; height:50px; transition:border-color .2s, background .2s; }
+.field input:hover,.field select:hover,.field textarea:hover{ border-color:rgba(140,175,220,.38); }
+.field textarea{ height:130px; padding:12px 14px; resize:vertical; }
+.field select{ appearance:none; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%239aa8bc' stroke-width='1.6'/%3E%3C/svg%3E") no-repeat right 16px center; padding-right:40px; }
+.field select option{ background:var(--bg); }
+.field input:focus,.field select:focus,.field textarea:focus{ outline:none; border-color:var(--accent); background:rgba(90,169,255,.04); }
+.field.invalid input{ border-color:var(--danger); }
+.field .err{ font-size:var(--s-small); color:var(--danger); }
+.field .err:empty{ display:none; }
+.cf .send{ grid-column:1/-1; display:flex; align-items:center; gap:18px; flex-wrap:wrap; }
+@media(max-width:900px){ .req-in{ grid-template-columns:1fr; } .req .left{ border-right:0; border-bottom:1px solid var(--line); } form.cf{ grid-template-columns:1fr; } }
 /* ---------- footer ---------- */
 footer{ background:var(--bg); padding:clamp(64px,8vw,112px) 0 36px; }
 .foot{ display:grid; grid-template-columns:2fr 1fr 1fr; gap:32px; align-items:start; }
@@ -264,6 +302,7 @@ footer{ background:var(--bg); padding:clamp(64px,8vw,112px) 0 36px; }
     <button class="menu-btn" id="menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="nav-links"><span></span></button>
     <ul class="nav-links" id="nav-links">
       <li><a href="#vision">Vision</a></li>
+      <li><a href="#missions">Missions</a></li>
       <li><a href="#vehicles">Vehicles</a></li>
       <li><a href="#team">Team</a></li>
       <li><a class="btn" href="#contact">Contact</a></li>
@@ -280,7 +319,7 @@ footer{ background:var(--bg); padding:clamp(64px,8vw,112px) 0 36px; }
         <p class="lead" data-rise style="--i:1">Andromeda Space is building a constellation of refuelable orbital mobility vehicles to support millions of spacecraft operating on orbit.</p>
         <div class="actions" data-rise style="--i:2">
           <a class="btn" href="#contact">Contact us <svg aria-hidden="true"><use href="#arrow"/></svg></a>
-          <a class="btn ghost" href="#vision">Our vision</a>
+          <a class="btn ghost" href="#missions">Mission areas</a>
         </div>
       </div>
     </div>
@@ -293,49 +332,86 @@ footer{ background:var(--bg); padding:clamp(64px,8vw,112px) 0 36px; }
         <h2 id="vision-h" data-rise>Infrastructure to enable the next 50+ years of space commerce.</h2>
         <p class="lead" data-rise style="--i:1"><strong>Every settled frontier developed industry &amp; large-scale civilization only after infrastructure arrived.</strong> Space is no different. Before industry can grow in orbit, there has to be a way to move, refuel and service what is already up there.</p>
       </div>
-      <ul class="unlocks" aria-label="What infrastructure in orbit makes possible">
-        <li data-rise style="--i:1"><span>On-orbit manufacturing</span></li>
-        <li data-rise style="--i:2"><span>Asteroid mining</span></li>
-        <li data-rise style="--i:3"><span>Orbital compute</span></li>
-        <li data-rise style="--i:4"><span>Sustained human presence</span></li>
-      </ul>
-      <p class="close" data-rise>None of it happens without infrastructure.</p>
+      <div class="points-wrap" data-rise>
+        <p class="points-label">What infrastructure in orbit makes possible</p>
+        <ul class="points four">
+          <li><h3>On-orbit manufacturing</h3><p>Raw materials up, finished goods out.</p></li>
+          <li><h3>Asteroid mining</h3><p>Ore hauled somewhere useful.</p></li>
+          <li><h3>Orbital compute</h3><p>Parts, power and upkeep delivered.</p></li>
+          <li><h3>Sustained human presence</h3><p>Crews, supplies and fuel on schedule.</p></li>
+        </ul>
+        <p class="points-close">None of it happens without infrastructure.</p>
+      </div>
     </div>
   </section>
 
-  <section class="problem" aria-labelledby="problem-h">
+  <section class="problem" id="problem" aria-labelledby="problem-h">
     <div class="wrap">
       <div class="intro">
         <h2 id="problem-h" data-rise>Space needs same&#8209;day shipping.</h2>
         <p class="lead" data-rise style="--i:1">Once a satellite reaches orbit, it is largely on its own. Space mobility and logistics, the ability to move, refuel and service spacecraft after launch, is still hard to come by.</p>
       </div>
-      <div>
-        <ul class="issues" aria-label="Where it stands today">
-          <li data-rise><h3>Expensive.</h3><p>Every maneuver burns a satellite's own fuel and shortens its life. The alternative is a dedicated mission.</p></li>
-          <li data-rise style="--i:1"><h3>Bespoke.</h3><p>Today's solutions are built one mission at a time, for one customer at a time.</p></li>
-          <li data-rise style="--i:2"><h3>Not supported by infrastructure.</h3><p>No standing fleet, no fuel on orbit, no network to call on.</p></li>
-        </ul>
-        <div class="answer" data-rise style="--i:3">
-          <p>We're fixing that.</p>
-          <a href="#vehicles">See the vehicles <svg aria-hidden="true"><use href="#arrow"/></svg></a>
-        </div>
-      </div>
+      <ul class="points three" aria-label="Where it stands today">
+        <li data-rise><h3>Expensive.</h3><p>Every maneuver burns a satellite's own fuel and shortens its life.</p></li>
+        <li data-rise style="--i:1"><h3>Bespoke.</h3><p>Built one mission at a time, for one customer at a time.</p></li>
+        <li data-rise style="--i:2"><h3>No infrastructure.</h3><p>No standing fleet, no fuel on orbit, no network to call on.</p></li>
+      </ul>
+      <p class="points-close fix" data-rise style="--i:3">We're fixing that. <a href="#missions">See how <svg aria-hidden="true"><use href="#arrow"/></svg></a></p>
     </div>
   </section>
 
-  <section class="demand solid" aria-labelledby="dem-h">
+  <section class="demand solid" id="demand" aria-labelledby="dem-h">
     <div class="wrap">
       <div class="head">
         <h2 id="dem-h" data-rise>The demand is already here.</h2>
         <p data-rise style="--i:1">Orbit is filling faster than the infrastructure to support it.</p>
       </div>
-      <div class="figures">
-        <div class="fig" data-rise style="--i:1"><span class="n" data-count="15000">15,000</span><p><strong>Satellites on orbit today.</strong></p></div>
-        <div class="fig" data-rise style="--i:2"><span class="n" data-count="1000000">1,000,000</span><p><strong>More could launch</strong> within the next decade.</p></div>
-        <div class="fig" data-rise style="--i:3"><span class="n" data-count="600" data-pre="$" data-post="M+">$600M+</span><p><strong>In U.S. government</strong> space mobility and logistics contracts awarded to date.</p></div>
-        <div class="fig" data-rise style="--i:4"><span class="n" data-count="39" data-pre="$" data-post="B">$39B</span><p><strong>Projected in-space logistics market</strong> by 2035.</p></div>
+      <div class="frame dgrid" data-rise style="--i:2">
+        <div class="plot">
+          <p class="mono cap"><span class="a">Satellites on orbit</span> · total</p>
+          <svg viewBox="0 0 720 340" role="img" aria-label="Line chart of satellites on orbit: 15,000 today, rising to more than 1,000,000 within the next decade">
+            <line class="gl" x1="90" y1="40" x2="700" y2="40"/><line class="gl" x1="90" y1="102" x2="700" y2="102"/><line class="gl" x1="90" y1="165" x2="700" y2="165"/><line class="gl" x1="90" y1="227" x2="700" y2="227"/>
+            <line class="ax" x1="90" y1="20" x2="90" y2="290"/><line class="ax" x1="90" y1="290" x2="700" y2="290"/>
+            <text class="tk" x="78" y="45" text-anchor="end">1M</text><text class="tk" x="78" y="107" text-anchor="end">750K</text><text class="tk" x="78" y="170" text-anchor="end">500K</text><text class="tk" x="78" y="232" text-anchor="end">250K</text><text class="tk" x="78" y="295" text-anchor="end">0</text>
+            <text class="tk" x="110" y="318" text-anchor="middle">Today</text><text class="tk" x="660" y="318" text-anchor="middle">+10 yrs</text>
+            <path class="area" d="M110 286 C 380 284, 540 220, 660 36 L660 290 L110 290 Z"/>
+            <path class="proj draw" d="M110 286 C 380 284, 540 220, 660 36"/>
+            <circle class="pt now" cx="110" cy="286" r="7"/><circle class="pt" cx="660" cy="36" r="7"/>
+            <text class="val" x="128" y="252" data-count="15000">15,000</text><text class="lb" x="130" y="272">On orbit today</text>
+            <text class="lb" x="636" y="30" text-anchor="end">Within the next decade</text><text class="val" x="636" y="70" text-anchor="end" data-count="1015000" data-pre="">1,015,000</text>
+          </svg>
+          <p class="units-note">Today's 15,000 satellites barely register next to the 1,000,000 more that could launch within the next decade.</p>
+        </div>
+        <div class="side">
+          <div><span class="n" data-count="600" data-pre="$" data-post="M+">$600M+</span><p>In U.S. government space mobility and logistics contracts awarded to date.</p></div>
+          <div><span class="n" data-count="39" data-pre="$" data-post="B">$39B</span><p>Projected in-space logistics market by 2035.</p></div>
+        </div>
       </div>
-      <p class="src">Market projection from third-party sources: MarketsandMarkets, GMI, Spherical Insights.</p>
+      <p class="src mono">Market projection from third-party sources: MarketsandMarkets, GMI, Spherical Insights.</p>
+    </div>
+  </section>
+
+  <section class="missions solid" id="missions" aria-labelledby="mis-h">
+    <div class="wrap">
+      <div class="head"><h2 id="mis-h" data-rise>Defense and commercial.</h2></div>
+      <div class="mgrid">
+        <div class="mcol" data-rise style="--i:1">
+          <p class="mono mtag"><span class="a">Defense</span> · U.S. government</p>
+          <ul>
+            <li>Reconstitute without waiting on launch.</li>
+            <li>Maneuver without burning satellite fuel.</li>
+            <li>Keep pace with adversaries in orbit.</li>
+          </ul>
+        </div>
+        <div class="mcol" data-rise style="--i:2">
+          <p class="mono mtag"><span class="a">Commercial</span> · Satellite operators</p>
+          <ul>
+            <li>Extend constellation life.</li>
+            <li>Reposition without a new launch.</li>
+            <li>Inspect and service on orbit.</li>
+          </ul>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -363,64 +439,36 @@ footer{ background:var(--bg); padding:clamp(64px,8vw,112px) 0 36px; }
     <div class="wrap">
       <div class="head"><h2 id="team-h" data-rise>Built by engineers who fly things.</h2></div>
       <div class="people">
-        <article class="person" data-rise style="--i:1">
-          <div class="ph"><img src="assets/img/team-ben.jpg" alt="Benjamin Miller" width="300" height="300" loading="lazy"></div>
-          <div class="info"><h3>Benjamin Miller</h3><p class="role">CEO &amp; Chief Engineer</p><p class="bio">Built a rocket bound for space in high school. Aerospace Engineering, PSU.</p></div>
-        </article>
-        <article class="person" data-rise style="--i:2">
-          <div class="ph"><img src="assets/img/team-chris.jpg" alt="Christopher Do" width="300" height="300" loading="lazy"></div>
-          <div class="info"><h3>Christopher Do</h3><p class="role">CTO &amp; Lead Vehicle Engineer</p><p class="bio">Built hypersonic aerostructures. In high school. Aerospace Engineering, VT.</p></div>
-        </article>
-        <article class="person" data-rise style="--i:3">
-          <div class="ph"><img src="assets/img/team-johanna.jpg" alt="Johanna Stuard" width="300" height="300" loading="lazy"></div>
-          <div class="info"><h3>Johanna Stuard</h3><p class="role">Chief Scientist</p><p class="bio">Mechanical Engineering, Cornell.</p></div>
-        </article>
-        <article class="person" data-rise style="--i:4">
-          <div class="ph"><img src="assets/img/team-doug.jpg" alt="Doug Owens" width="162" height="164" loading="lazy"></div>
-          <div class="info"><h3>Doug Owens</h3><p class="role">COO</p><p class="bio">Built a $500M government pipeline at his last firm. M.G.M. Space Leadership, Business &amp; Policy, ASU.</p></div>
-        </article>
-      </div>
-
-      <div class="advisors">
-        <h2 data-rise>Supported by advisors with mission expertise.</h2>
-        <ul class="adv">
-          <li data-rise style="--i:1"><h3>James Bultitude</h3><p>Former CTO and founding Chief Engineer of Orbit Fab; now CEO of Exploration Technology Group.</p></li>
-          <li data-rise style="--i:2"><h3>Dr. Erik Dambach</h3><p>8 yrs SpaceX Draco engineer; Blue Origin BE-4 ignition lead; Hermeus propulsion lead.</p></li>
-          <li data-rise style="--i:3"><h3>Arnie Streland</h3><p>40+ years in space systems; former Northrop Grumman Lead Executive to USSF Space Systems Command.</p></li>
-        </ul>
+        <article class="person" data-rise style="--i:1"><div class="ph"><img src="assets/img/team-ben.jpg" alt="Benjamin Miller" width="300" height="300" loading="lazy"></div><div class="info"><h3>Benjamin Miller</h3><p class="role">CEO &amp; Chief Engineer</p><p class="bio">Built a rocket bound for space in high school. Aerospace Engineering, PSU.</p></div></article>
+        <article class="person" data-rise style="--i:2"><div class="ph"><img src="assets/img/team-chris.jpg" alt="Christopher Do" width="300" height="300" loading="lazy"></div><div class="info"><h3>Christopher Do</h3><p class="role">CTO &amp; Lead Vehicle Engineer</p><p class="bio">Built hypersonic aerostructures. In high school. Aerospace Engineering, VT.</p></div></article>
+        <article class="person" data-rise style="--i:3"><div class="ph"><img src="assets/img/team-johanna.jpg" alt="Johanna Stuard" width="300" height="300" loading="lazy"></div><div class="info"><h3>Johanna Stuard</h3><p class="role">Chief Scientist</p><p class="bio">Mechanical Engineering, Cornell.</p></div></article>
+        <article class="person" data-rise style="--i:4"><div class="ph"><img src="assets/img/team-doug.jpg" alt="Doug Owens" width="162" height="164" loading="lazy"></div><div class="info"><h3>Doug Owens</h3><p class="role">COO</p><p class="bio">Built a $500M government pipeline at his last firm. M.G.M. Space Leadership, Business &amp; Policy, ASU.</p></div></article>
+        <article class="person adv" data-rise style="--i:1"><div class="ph mono-ph" aria-hidden="true">JB</div><div class="info"><h3>James Bultitude</h3><p class="role">Advisor</p><p class="bio">Former CTO and founding Chief Engineer of Orbit Fab; now CEO of Exploration Technology Group.</p></div></article>
+        <article class="person adv" data-rise style="--i:2"><div class="ph mono-ph" aria-hidden="true">ED</div><div class="info"><h3>Dr. Erik Dambach</h3><p class="role">Advisor</p><p class="bio">8 yrs SpaceX Draco engineer; Blue Origin BE-4 ignition lead; Hermeus propulsion lead.</p></div></article>
+        <article class="person adv" data-rise style="--i:3"><div class="ph mono-ph" aria-hidden="true">AS</div><div class="info"><h3>Arnie Streland</h3><p class="role">Advisor</p><p class="bio">40+ years in space systems; former Northrop Grumman Lead Executive to USSF Space Systems Command.</p></div></article>
       </div>
     </div>
   </section>
 
   <section class="contact" id="contact" data-scene-window aria-labelledby="contact-h">
     <div class="wrap">
-      <div class="panel" data-rise>
-        <div class="left">
-          <div>
-            <h2 id="contact-h">Contact</h2>
-            <p>For government, commercial and investor inquiries.</p>
+      <div class="frame req" data-rise>
+        <div class="strip mono"><span><b>Contact</b> · Inquiry form</span><span>Government · Commercial · Investor</span></div>
+        <div class="req-in">
+          <div class="left">
+            <div><h2 id="contact-h">Contact</h2><p>For government, commercial and investor inquiries.</p></div>
+            <div><p class="mono">Email</p><a class="mail" href="mailto:BenMiller@ascspace.com">BenMiller@ascspace.com</a></div>
           </div>
-          <dl>
-            <div><dt>Email</dt><dd><a href="mailto:BenMiller@ascspace.com">BenMiller@ascspace.com</a></dd></div>
-          </dl>
+          <form class="cf" id="contact-form" novalidate>
+            <div class="field"><label class="mono" for="cf-name">Name</label><input id="cf-name" name="name" autocomplete="name" required aria-describedby="err-name"><span class="err" id="err-name"></span></div>
+            <div class="field"><label class="mono" for="cf-email">Email</label><input id="cf-email" name="email" type="email" autocomplete="email" required aria-describedby="err-email"><span class="err" id="err-email"></span></div>
+            <div class="field"><label class="mono" for="cf-org">Organization</label><input id="cf-org" name="org" autocomplete="organization"></div>
+            <div class="field"><label class="mono" for="cf-intent">Inquiry type</label>
+              <select id="cf-intent" name="intent"><option value="government">Government or defense</option><option value="commercial">Commercial operator</option><option value="investor">Investor</option><option value="other">Other</option></select></div>
+            <div class="field wide"><label class="mono" for="cf-msg">Message</label><textarea id="cf-msg" name="message"></textarea></div>
+            <div class="send"><button class="btn" type="submit">Send message <svg aria-hidden="true"><use href="#arrow"/></svg></button><p class="mono cf-status" id="cf-status" role="status"></p></div>
+          </form>
         </div>
-        <form class="cf" id="contact-form" novalidate>
-          <div class="field"><label for="cf-name">Name</label><input id="cf-name" name="name" autocomplete="name" required aria-describedby="err-name"><span class="err" id="err-name"></span></div>
-          <div class="field"><label for="cf-email">Email</label><input id="cf-email" name="email" type="email" autocomplete="email" required aria-describedby="err-email"><span class="err" id="err-email"></span></div>
-          <div class="field"><label for="cf-org">Organization</label><input id="cf-org" name="org" autocomplete="organization"></div>
-          <div class="field"><label for="cf-intent">Inquiry type</label>
-            <select id="cf-intent" name="intent">
-              <option value="government">Government or defense</option>
-              <option value="commercial">Commercial operator</option>
-              <option value="investor">Investor</option>
-              <option value="other">Other</option>
-            </select></div>
-          <div class="field wide"><label for="cf-msg">Message</label><textarea id="cf-msg" name="message"></textarea></div>
-          <div class="send">
-            <button class="btn" type="submit">Send message <svg aria-hidden="true"><use href="#arrow"/></svg></button>
-            <p class="cf-status" id="cf-status" role="status"></p>
-          </div>
-        </form>
       </div>
     </div>
   </section>
@@ -433,7 +481,7 @@ footer{ background:var(--bg); padding:clamp(64px,8vw,112px) 0 36px; }
         <a class="brand" href="#top"><img src="assets/img/logo-mark.png" alt="" width="306" height="196">Andromeda Space</a>
         <p>Infrastructure to enable the next 50+ years of space commerce.</p>
       </div>
-      <ul><li><a href="#vision">Vision</a></li><li><a href="#vehicles">Vehicles</a></li><li><a href="#team">Team</a></li></ul>
+      <ul><li><a href="#vision">Vision</a></li><li><a href="#missions">Missions</a></li><li><a href="#vehicles">Vehicles</a></li><li><a href="#team">Team</a></li></ul>
       <ul><li><a href="#contact">Contact</a></li><li><a href="mailto:BenMiller@ascspace.com">BenMiller@ascspace.com</a></li></ul>
     </div>
     <div class="copy">

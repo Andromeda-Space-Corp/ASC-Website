@@ -240,10 +240,41 @@ if (drag) {
 
 /* ---- live readout ---- */
 const readout = document.getElementById('earth-time');
-function tickReadout(d) {
-  if (!readout) return;
+const telSun = document.getElementById('tel-sun');
+function tickReadout(d, s) {
   const p = n => String(n).padStart(2, '0');
-  readout.textContent = `${p(d.getUTCHours())}:${p(d.getUTCMinutes())} UTC`;
+  if (readout) readout.textContent = `${p(d.getUTCHours())}:${p(d.getUTCMinutes())} UTC`;
+  if (telSun && s) {
+    const lat = s.lat / DEG, lon = s.lon / DEG;
+    telSun.textContent = `${Math.abs(lat).toFixed(1)}°${lat >= 0 ? 'N' : 'S'} ${Math.abs(lon).toFixed(1)}°${lon >= 0 ? 'E' : 'W'}`;
+  }
+}
+
+/* ---- orbit labels: optional HTML tags pinned to each band's left limb ---- */
+const ORBITS = { leo: LEO, polar: POLAR, geo: GEO };
+const labels = [...document.querySelectorAll('[data-orbit]')];
+const _p = new THREE.Vector3(), _best = new THREE.Vector3();
+function placeLabels() {
+  if (!labels.length) return;
+  NET.updateMatrixWorld(true);
+  for (const el of labels) {
+    const o = ORBITS[el.dataset.orbit]; if (!o) continue;
+    let by = -Infinity;
+    // highest point of the band's near side, over the planet and clear of the copy on the left
+    for (let i = 0; i < 64; i++) {
+      orbitPoint(o, (i / 64) * Math.PI * 2, _p).applyMatrix4(NET.matrixWorld);
+      if (_p.z < 0) continue;
+      const q = _p.clone().project(camera);
+      if (q.x < 0.05 || q.x > 0.95 || q.y > 0.86) continue;
+      if (q.y > by) { by = q.y; _best.copy(_p); }
+    }
+    if (by === -Infinity) { el.style.opacity = 0; continue; }
+    const v = _best.project(camera);
+    el.style.opacity = '';
+    const sx = (v.x + 1) / 2 * innerWidth, sy = (1 - v.y) / 2 * innerHeight, flip = sx > innerWidth * 0.8;
+    el.classList.toggle('flip', flip);
+    el.style.transform = `translate(${sx.toFixed(1)}px, ${sy.toFixed(1)}px)${flip ? ' translateX(-100%)' : ''}`;
+  }
 }
 
 /* ---- render only while the scene can be seen ---- */
@@ -260,7 +291,7 @@ function loop(now) {
   const t = now / 1000;
 
   if (now - sunAt > 30000 || !sunAt) {                       // the sun moves slowly; refresh twice a minute
-    const d = new Date(), s = subsolar(d); toLocal(s.lat, s.lon, sunLocal); tickReadout(d); sunAt = now;
+    const d = new Date(), s = subsolar(d); toLocal(s.lat, s.lon, sunLocal); tickReadout(d, s); sunAt = now;
   }
   if (!dragging) { dragOffset += dragVel; dragVel *= 0.94; }
   const scrollT = clamp(scrollY / innerHeight, 0, 1.2);
@@ -281,6 +312,7 @@ function loop(now) {
   camera.position.set(-framing.x, -framing.y + scrollT * 2, framing.dist + pull);
   camera.lookAt(-framing.x, -framing.y + scrollT * 2, 0);
   renderer.render(scene, camera);
+  placeLabels();
   if (!started) { started = true; document.documentElement.classList.add('scene-ready'); }
 }
 requestAnimationFrame(loop);
