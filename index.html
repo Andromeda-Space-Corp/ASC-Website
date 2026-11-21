@@ -233,7 +233,8 @@ main, footer{ position:relative; z-index:1; }
 .person{ background:var(--bg); display:flex; flex-direction:column; text-decoration:none; }
 .person .ph{ aspect-ratio:4/5; overflow:hidden; background:var(--surface-2); }
 .person .ph img{ width:100%; height:100%; object-fit:cover; filter:grayscale(1) contrast(1.05); transition:filter .5s ease, transform .8s var(--ease); }
-.person.adv .ph{ aspect-ratio:16/9; }
+.person.adv .ph{ aspect-ratio:4/3; }
+.person.adv .ph img{ object-position:50% 15%; }
 .mono-ph{ display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:1.6rem; letter-spacing:.12em; color:var(--accent); }
 .person .info{ padding:22px 24px 28px; flex:1; display:flex; flex-direction:column; }
 .person h3{ font-size:1.3rem; letter-spacing:-0.02em; }
@@ -349,7 +350,7 @@ footer{ background:var(--bg); padding:clamp(64px,8vw,112px) 0 36px; }
     <div class="wrap">
       <div class="intro">
         <h2 id="problem-h" data-rise>Space needs same&#8209;day shipping.</h2>
-        <p class="lead" data-rise style="--i:1">Once a satellite reaches orbit, it is largely on its own. Space mobility and logistics, the ability to move, refuel and service spacecraft after launch, is still hard to come by.</p>
+        <p class="lead" data-rise style="--i:1">Once a satellite reaches orbit, it is largely on its own. Space mobility and logistics (the ability to move, refuel, and service spacecraft after launch) is still hard to come by.</p>
       </div>
       <ul class="points three" aria-label="Where it stands today">
         <li data-rise><h3>Expensive.</h3><p>Every maneuver burns a satellite's own fuel and shortens its life.</p></li>
@@ -440,12 +441,12 @@ footer{ background:var(--bg); padding:clamp(64px,8vw,112px) 0 36px; }
       <div class="head"><h2 id="team-h" data-rise>Built by engineers who fly things.</h2></div>
       <div class="people">
         <article class="person" data-rise style="--i:1"><div class="ph"><img src="assets/img/team-ben.jpg" alt="Benjamin Miller" width="300" height="300" loading="lazy"></div><div class="info"><h3>Benjamin Miller</h3><p class="role">CEO &amp; Chief Engineer</p><p class="bio">Built a rocket bound for space in high school. Aerospace Engineering, PSU.</p></div></article>
-        <article class="person" data-rise style="--i:2"><div class="ph"><img src="assets/img/team-chris.jpg" alt="Christopher Do" width="300" height="300" loading="lazy"></div><div class="info"><h3>Christopher Do</h3><p class="role">CTO &amp; Lead Vehicle Engineer</p><p class="bio">Built hypersonic aerostructures. In high school. Aerospace Engineering, VT.</p></div></article>
-        <article class="person" data-rise style="--i:3"><div class="ph"><img src="assets/img/team-johanna.jpg" alt="Johanna Stuard" width="300" height="300" loading="lazy"></div><div class="info"><h3>Johanna Stuard</h3><p class="role">Chief Scientist</p><p class="bio">Mechanical Engineering, Cornell.</p></div></article>
+        <article class="person" data-rise style="--i:2"><div class="ph"><img src="assets/img/team-chris.jpg" alt="Christopher Do" width="300" height="300" loading="lazy"></div><div class="info"><h3>Christopher Do</h3><p class="role">CTO &amp; Lead Vehicle Engineer</p><p class="bio">Built hypersonic aerostructures in high school. Aerospace Engineering, VT.</p></div></article>
+        <article class="person" data-rise style="--i:3"><div class="ph"><img src="assets/img/team-johanna.jpg" alt="Johanna Stuard" width="300" height="300" loading="lazy"></div><div class="info"><h3>Johanna Stuard</h3><p class="role">Chief Scientist</p><p class="bio">Specializes in innovative materials for space. Mechanical Engineering, Cornell.</p></div></article>
         <article class="person" data-rise style="--i:4"><div class="ph"><img src="assets/img/team-doug.jpg" alt="Doug Owens" width="162" height="164" loading="lazy"></div><div class="info"><h3>Doug Owens</h3><p class="role">COO</p><p class="bio">Built a $500M government pipeline at his last firm. M.G.M. Space Leadership, Business &amp; Policy, ASU.</p></div></article>
-        <article class="person adv" data-rise style="--i:1"><div class="ph mono-ph" aria-hidden="true">JB</div><div class="info"><h3>James Bultitude</h3><p class="role">Advisor</p><p class="bio">Former CTO and founding Chief Engineer of Orbit Fab; now CEO of Exploration Technology Group.</p></div></article>
-        <article class="person adv" data-rise style="--i:2"><div class="ph mono-ph" aria-hidden="true">ED</div><div class="info"><h3>Dr. Erik Dambach</h3><p class="role">Advisor</p><p class="bio">8 yrs SpaceX Draco engineer; Blue Origin BE-4 ignition lead; Hermeus propulsion lead.</p></div></article>
-        <article class="person adv" data-rise style="--i:3"><div class="ph mono-ph" aria-hidden="true">AS</div><div class="info"><h3>Arnie Streland</h3><p class="role">Advisor</p><p class="bio">40+ years in space systems; former Northrop Grumman Lead Executive to USSF Space Systems Command.</p></div></article>
+        <article class="person adv" data-rise style="--i:1"><div class="ph"><img src="assets/img/team-james.jpg" alt="James Bultitude" width="400" height="400" loading="lazy"></div><div class="info"><h3>James Bultitude</h3><p class="role">Advisor</p><p class="bio">Former CTO and founding Chief Engineer of Orbit Fab; now CEO of Exploration Technology Group.</p></div></article>
+        <article class="person adv" data-rise style="--i:2"><div class="ph"><img src="assets/img/team-erik.jpg" alt="Dr. Erik Dambach" width="500" height="500" loading="lazy"></div><div class="info"><h3>Dr. Erik Dambach</h3><p class="role">Advisor</p><p class="bio">8 yrs SpaceX Draco engineer; Blue Origin BE-4 ignition lead; Hermeus propulsion lead.</p></div></article>
+        <article class="person adv" data-rise style="--i:3"><div class="ph"><img src="assets/img/team-arnie.jpg" alt="Arnie Streland" width="400" height="400" loading="lazy"></div><div class="info"><h3>Arnie Streland</h3><p class="role">Advisor</p><p class="bio">40+ years in space systems; former Northrop Grumman Lead Executive to USSF Space Systems Command.</p></div></article>
       </div>
     </div>
   </section>
